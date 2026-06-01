@@ -1,8 +1,8 @@
 # PJM Energy Forecast for Decisions
 
-Data centres are one of the fastest-growing sources of electricity demand in the US. Running one is capital-intensive, and electricity is among the largest operating costs. A CFO at a data centre operator connected to the PJM grid needs to budget energy costs 12 months out. Energy prices are volatile, so a point estimate is not enough: it creates false precision that leads to under-reserving when prices spike, or over-reserving and tying up capital unnecessarily.
+Data centres are one of the fastest-growing sources of electricity demand in the US. Running one is capital-intensive, and electricity is among the largest operating costs. A CFO at a data centre operator connected to the PJM grid needs to budget energy costs 12 months out. Energy prices are volatile. A point estimate is not enough: it creates false precision that leads to under-reserving when prices spike, or over-reserving and tying up capital unnecessarily.
 
-This project produces a forecast with prediction intervals, aggregated to monthly and annual figures, so a CFO can set reserves based on a range of plausible outcomes rather than a single number.
+This project produces a 12-month wholesale electricity price forecast with prediction intervals for the PJM West hub. The output is in $/MWh. A CFO applies their own consumption volume to convert that into a dollar budget figure.
 
 ---
 
@@ -30,10 +30,11 @@ The energy cost budgeting problem is the same problem in a different domain.
 
 ## What This Project Delivers
 
-- A time series forecast of daily wholesale electricity prices at the PJM West hub
-- Prediction intervals at 80% and 95% confidence, aggregated to monthly and annual budget figures
+- A 12-month wholesale electricity price forecast for the PJM West hub in $/MWh, aggregated to monthly and annual figures with prediction intervals at 80% and 95% confidence
+- A comparison against a seasonal naive benchmark, quantifying the business value of the forecasting approach in dollar terms
 - Output framed for a CFO, not a data scientist
-- A comparison against a naive seasonal benchmark, quantifying the business value of the forecasting approach in dollar terms
+
+The forecast is expressed in $/MWh. A CFO multiplies this by their facility's expected consumption to arrive at a total energy budget. That consumption figure is specific to each operator and falls outside the scope of this project.
 
 ---
 
@@ -48,10 +49,10 @@ The energy cost budgeting problem is the same problem in a different domain.
 
 ## Data Sources
 
-| Source | Description | Granularity | Coverage |
-|---|---|---|---|
-| PJM via Kaggle | Hourly energy consumption in MW | Hourly | 2002-2018 |
-| EIA via ICE | Wholesale spot price at PJM West hub ($/MWh), volume-weighted daily average | Daily | 2001-2018 |
+| Source | Description | Role | Granularity | Coverage |
+|---|---|---|---|---|
+| PJM via Kaggle | Hourly energy consumption in MW | Candidate feature for price modelling | Hourly | 2002-2018 |
+| EIA via ICE | Wholesale spot price at PJM West hub ($/MWh), volume-weighted daily average | Forecast target | Daily | 2001-2018 |
 
 See `data/README.md` for download instructions.
 
@@ -78,10 +79,15 @@ Excluded to keep this project finishable:
 - Multi-region analysis beyond PJM West
 
 ---
- 
+
 ## Real-World Holdout
- 
-The final year of data (2018) is withheld from all EDA and modelling work. Once the model is built and evaluated on the preceding years, it is run against 2018 as a simulation of real-world deployment: the model sees only what it would have known at the end of 2017 and forecasts into a year it has never seen. This tests whether the model holds up under conditions that resemble practice rather than a controlled experiment.
+
+The final year of data (2018) is withheld from all EDA and modelling work. Once
+the model is built and evaluated on the preceding years, it is run against 2018
+as a simulation of real-world deployment: the model sees only what it would have
+known at the end of 2017 and forecasts into a year it has never seen. This tests
+whether the model holds up under conditions that resemble practice rather than
+a controlled experiment.
 
 ---
 
@@ -89,7 +95,7 @@ The final year of data (2018) is withheld from all EDA and modelling work. Once 
 
 This project is complete when:
 
-1. All three notebooks run end-to-end without errors on a clean environment
+1. All four notebooks run end-to-end without errors on a clean environment
 2. The modelling notebook produces a 12-month price forecast with prediction intervals
 3. The final output is interpretable by a non-technical reader
 4. `data/README.md` contains sufficient instructions to reproduce the data environment
@@ -100,5 +106,3 @@ This project is complete when:
 ## Setup
 
 See `data/README.md` for data download instructions and `requirements.txt` for dependencies.
-
-## TO DO
