@@ -1,14 +1,22 @@
 # PJM Energy Forecast for Decisions
 
-A CFO needs to budget energy costs 12 months out. Energy prices are volatile. A point estimate is not enough — it creates false precision that leads to under-reserving when prices spike, or over-reserving and tying up capital unnecessarily.
+Data centres are one of the fastest-growing sources of electricity demand in the US. Running one is capital-intensive, and electricity is among the largest operating costs. A CFO at a data centre operator connected to the PJM grid needs to budget energy costs 12 months out. Energy prices are volatile, so a point estimate is not enough: it creates false precision that leads to under-reserving when prices spike, or over-reserving and tying up capital unnecessarily.
 
 This project produces a forecast with prediction intervals, aggregated to monthly and annual figures, so a CFO can set reserves based on a range of plausible outcomes rather than a single number.
 
 ---
 
+## The Decision-Maker
+
+A CFO at a data centre operator drawing power from the PJM grid. PJM is the regional transmission organisation that operates the electricity market across 13 US states and Washington D.C., one of the largest competitive wholesale electricity markets in the world.
+
+The CFO does not operate the grid. They buy from it. What they need to know is what that is likely to cost over the next year, and how wrong that estimate could plausibly be.
+
+---
+
 ## The Cost of Being Wrong
 
-Under-reserving when prices spike means drawing from contingency funds or absorbing an unplanned hit to margins. Over-reserving means capital sitting idle that could have been deployed elsewhere. Both directions have a real cost.
+Electricity typically represents 20-40% of total data centre operating costs, varying by facility size and workload type ([IAEI Magazine, 2025](https://iaeimagazine.org/electrical-fundamentals/how-much-electricity-does-a-data-center-use-complete-2025-analysis/); [The Network Installers, 2026](https://thenetworkinstallers.com/blog/data-center-operating-costs/)). Under-reserving when prices spike means drawing from contingency funds or absorbing an unplanned hit to margins. Over-reserving means capital sitting idle that could have been deployed elsewhere. At that share of operating expenditure, the cost of being wrong in either direction is significant.
 
 ---
 
@@ -25,6 +33,7 @@ The energy cost budgeting problem is the same problem in a different domain.
 - A time series forecast of daily wholesale electricity prices at the PJM West hub
 - Prediction intervals at 80% and 95% confidence, aggregated to monthly and annual budget figures
 - Output framed for a CFO, not a data scientist
+- A comparison against a naive seasonal benchmark, quantifying the business value of the forecasting approach in dollar terms
 
 ---
 
@@ -41,8 +50,8 @@ The energy cost budgeting problem is the same problem in a different domain.
 
 | Source | Description | Granularity | Coverage |
 |---|---|---|---|
-| PJM via Kaggle | Hourly energy consumption in MW | Hourly | 2002–2018 |
-| EIA via ICE | Wholesale spot price at PJM West hub ($/MWh), volume-weighted daily average | Daily | 2001–2018 |
+| PJM via Kaggle | Hourly energy consumption in MW | Hourly | 2002-2018 |
+| EIA via ICE | Wholesale spot price at PJM West hub ($/MWh), volume-weighted daily average | Daily | 2001-2018 |
 
 See `data/README.md` for download instructions.
 
@@ -55,6 +64,7 @@ See `data/README.md` for download instructions.
 | `00_data_ingestion.ipynb` | Fetch and validate all data sources |
 | `01_eda.ipynb` | Explore, clean, and understand the data |
 | `02_modelling.ipynb` | Build forecast, evaluate, and produce CFO-facing output |
+| `03_holdout_evaluation.ipynb` | Simulate real-world deployment against the 2018 holdout year |
 
 ---
 
@@ -68,6 +78,12 @@ Excluded to keep this project finishable:
 - Multi-region analysis beyond PJM West
 
 ---
+ 
+## Real-World Holdout
+ 
+The final year of data (2018) is withheld from all EDA and modelling work. Once the model is built and evaluated on the preceding years, it is run against 2018 as a simulation of real-world deployment: the model sees only what it would have known at the end of 2017 and forecasts into a year it has never seen. This tests whether the model holds up under conditions that resemble practice rather than a controlled experiment.
+
+---
 
 ## Definition of Done
 
@@ -77,9 +93,12 @@ This project is complete when:
 2. The modelling notebook produces a 12-month price forecast with prediction intervals
 3. The final output is interpretable by a non-technical reader
 4. `data/README.md` contains sufficient instructions to reproduce the data environment
+5. The 2018 holdout evaluation is complete and results are discussed in plain language
 
 ---
 
 ## Setup
 
 See `data/README.md` for data download instructions and `requirements.txt` for dependencies.
+
+## TO DO
